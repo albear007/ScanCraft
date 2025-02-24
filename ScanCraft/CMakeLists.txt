@@ -1,4 +1,5 @@
 set(EXE_NAME ScanCraft)
+set(CMAKE_AUTOMOC ON)
 
 find_package(fmt CONFIG REQUIRED)
 find_package(Qt6 CONFIG REQUIRED COMPONENTS Widgets Gui)
