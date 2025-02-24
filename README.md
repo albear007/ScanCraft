@@ -4,8 +4,6 @@ Here’s your corrected README.md with proper spacing and formatting:
 
 ### Advanced GUI for Controlling Motors and Processing Images on Raspberry Pi
 
-![ScanCraft Logo](resources/images/logo.png)
-
 ## 🚀 Overview
 
 ScanCraft is a Qt-based GUI application designed to interface with a Raspberry Pi, allowing users to:
