@@ -3,8 +3,12 @@
   "name": "cpp-template",
   "version": "0.0",
   "dependencies": [
-    "fmt",
-    "gtest",
-    "qtbase"
+    "qtbase",
+    {
+      "name": "vtk",
+      "features": [
+        "qt"
+      ]
+    }
   ]
 }

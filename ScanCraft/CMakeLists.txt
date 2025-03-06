@@ -1,15 +1,27 @@
 set(EXE_NAME ScanCraft)
+
+set(CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH OFF)
+set(CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY OFF)
+set(CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH OFF)
+set(CMAKE_FIND_USE_PACKAGE_REGISTRY OFF)
+set(CMAKE_FIND_USE_SYSTEM_PREFIX_PATH OFF)
+
+find_package(Qt6 CONFIG REQUIRED COMPONENTS Widgets Gui)
+find_package(VTK REQUIRED COMPONENTS CommonCore GUISupportQt)
+qt_standard_project_setup()
 set(CMAKE_AUTOMOC ON)
 
-find_package(fmt CONFIG REQUIRED)
-find_package(Qt6 CONFIG REQUIRED COMPONENTS Widgets Gui)
 
 
 qt_add_executable(${EXE_NAME}
   src/main.cpp
   src/MainWindow.cpp
   src/MainWindow.hpp
+  src/MeshDisplay.hpp
+  src/MeshDisplay.cpp
 )
+
+
 
 set_target_properties(${EXE_NAME} PROPERTIES
     CXX_STANDARD 20
@@ -18,10 +30,11 @@ set_target_properties(${EXE_NAME} PROPERTIES
 
 
 target_link_libraries(${EXE_NAME} PRIVATE
-  fmt::fmt
   Qt::Widgets
   Qt::Gui
-)
+  VTK::CommonCore
+  VTK::GUISupportQt
+  )
 target_include_directories(${EXE_NAME} PRIVATE
   src
 )
