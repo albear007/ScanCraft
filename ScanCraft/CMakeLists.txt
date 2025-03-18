@@ -7,7 +7,7 @@ set(CMAKE_FIND_USE_PACKAGE_REGISTRY OFF)
 set(CMAKE_FIND_USE_SYSTEM_PREFIX_PATH OFF)
 
 find_package(Qt6 CONFIG REQUIRED COMPONENTS Widgets Gui)
-find_package(VTK REQUIRED COMPONENTS CommonCore GUISupportQt)
+find_package(VTK REQUIRED COMPONENTS CommonCore GUISupportQt IOGeometry)
 qt_standard_project_setup()
 set(CMAKE_AUTOMOC ON)
 
@@ -34,6 +34,7 @@ target_link_libraries(${EXE_NAME} PRIVATE
   Qt::Gui
   VTK::CommonCore
   VTK::GUISupportQt
+  VTK::IOGeometry
   )
 target_include_directories(${EXE_NAME} PRIVATE
   src
