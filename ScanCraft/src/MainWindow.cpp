@@ -3,7 +3,11 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), meshDisplay(new MeshDisplay(this)) {
+
   createMenus();
+
+  statusBar();
+
   this->setCentralWidget(meshDisplay);
 }
 
