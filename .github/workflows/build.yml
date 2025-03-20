@@ -49,7 +49,7 @@ jobs:
 
       - name: CMake configure
         shell: pwsh
-        run: cmake --preset win64
+        run: cmake --preset win64 -DVCPKG_INSTALL_OPTIONS="--x-buildtrees-root=D:/b"
 
       - name: CMake build
         shell: pwsh

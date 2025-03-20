@@ -1,11 +1,19 @@
 
 #include "MainWindow.hpp"
 #include <QApplication>
+#include <QStyle>
+#include <QVTKOpenGLNativeWidget.h>
+#include <qsurfaceformat.h>
 
 auto main(int argc, char **argv) -> int {
 
+  QSurfaceFormat::setDefaultFormat(QVTKOpenGLNativeWidget::defaultFormat());
+
+  QApplication::setStyle("Fusion");
   QApplication app(argc, argv);
+
   MainWindow mainWindow;
-  mainWindow.show();
+  mainWindow.showMaximized();
+
   return QApplication::exec();
 }
