@@ -2,9 +2,6 @@ set(EXE_NAME ScanCraft)
 
 set(CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY OFF)
 set(CMAKE_FIND_USE_SYSTEM_PREFIX_PATH OFF)
-if(WIN32)
-    set(VCPKG_INSTALL_OPTIONS "--x-buildtrees-root=D:/b")
-endif()
 
 find_package(Qt6 CONFIG REQUIRED COMPONENTS Widgets Gui)
 find_package(VTK REQUIRED COMPONENTS CommonCore GUISupportQt IOGeometry)
