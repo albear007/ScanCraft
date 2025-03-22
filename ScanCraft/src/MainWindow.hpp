@@ -41,6 +41,7 @@ private:
 
   // // Initlize UI elements through these helpers.
   void createMenus();
+  void openFiles();
   // void createDocks();
   // void createToolBar();
   // void createStatusBar();

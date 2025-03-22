@@ -1,5 +1,7 @@
 #include "MainWindow.hpp"
 #include "MeshDisplay.hpp"
+#include <QFileDialog>
+#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), meshDisplay(new MeshDisplay(this)) {
@@ -19,6 +21,13 @@ void MainWindow::createMenus() {
 
 void MainWindow::setupOpenAction() {
   openAction = new QAction(tr("&Open"), this);
+  connect(openAction, &QAction::triggered, this, &MainWindow::openFiles);
+}
+
+void MainWindow::openFiles() {
+  QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "",
+                                                  tr("STL Files (*.stl)"));
+  std::cout << "File Name: " << fileName.toStdString() << "\n";
 }
 
 // void MainWindow::createDocks() {
