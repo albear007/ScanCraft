@@ -1,9 +1,12 @@
 #include "MeshDisplay.hpp"
 #include <QVTKOpenGLNativeWidget.h>
+#include <qassert.h>
 #include <vtkActor.h>
+#include <vtkAlgorithm.h>
 #include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkNew.h>
+#include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindow.h>
@@ -23,11 +26,9 @@ MeshDisplay::MeshDisplay(QWidget *parent) : QVTKOpenGLNativeWidget(parent) {
   actor->GetProperty()->SetEdgeVisibility(1);
   renderer->AddActor(actor);
 }
-void MeshDisplay::displaySTL(const QString &fileName) {
-  vtkNew<vtkSTLReader> reader;
-  reader->SetFileName(fileName.toStdString().c_str());
-  reader->Update();
-  mapper->SetInputConnection(reader->GetOutputPort());
+void MeshDisplay::displayMesh(vtkAlgorithmOutput *mesh) {
+  Q_ASSERT(mesh != nullptr);
+  mapper->SetInputConnection(mesh);
   renderer->ResetCamera();
   renderWindow->Render();
 }

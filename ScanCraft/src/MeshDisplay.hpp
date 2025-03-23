@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <qtmetamacros.h>
 #include <vtkActor.h>
+#include <vtkAlgorithm.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderWindow.h>
@@ -12,7 +13,7 @@ class MeshDisplay : public QVTKOpenGLNativeWidget {
   Q_OBJECT
 public:
   explicit MeshDisplay(QWidget *parent = nullptr);
-  void displayMesh(vtkSmartPointer<vtkPolyData> mesh);
+  void displayMesh(vtkAlgorithmOutput *mesh);
 
 private:
   vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;

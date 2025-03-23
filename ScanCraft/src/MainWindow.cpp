@@ -1,5 +1,6 @@
 #include "MainWindow.hpp"
 #include "MeshDisplay.hpp"
+#include "loaders/STLLoader.hpp"
 #include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -24,10 +25,10 @@ void MainWindow::setupOpenAction() {
 }
 
 void MainWindow::openSTL() {
-  QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "",
-                                                  tr("STL Files (*.stl)"));
-
-  meshDisplay->displaySTL(fileName);
+  QStringList fileNames = QFileDialog::getOpenFileNames(
+      this, tr("Open Files"), "",
+      tr("STL Files (*.stl);;PLY Files (*.ply);;All Files (*)"));
+  meshDisplay->displayMesh(STLLoader().load(fileNames));
 }
 
 // void MainWindow::createDocks() {

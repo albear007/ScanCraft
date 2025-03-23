@@ -16,6 +16,9 @@ qt_add_executable(${EXE_NAME}
   src/MainWindow.hpp
   src/MeshDisplay.hpp
   src/MeshDisplay.cpp
+  src/loaders/MeshLoader.hpp
+  src/loaders/STLLoader.hpp
+  src/loaders/STLLoader.cpp
 )
 
 
