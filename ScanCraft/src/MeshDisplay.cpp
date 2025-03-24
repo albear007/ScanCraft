@@ -1,9 +1,12 @@
 #include "MeshDisplay.hpp"
 #include <QVTKOpenGLNativeWidget.h>
+#include <qassert.h>
 #include <vtkActor.h>
+#include <vtkAlgorithm.h>
 #include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkNew.h>
+#include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindow.h>
@@ -13,25 +16,19 @@
 
 MeshDisplay::MeshDisplay(QWidget *parent) : QVTKOpenGLNativeWidget(parent) {
 
-  vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
-
+  renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
   this->setRenderWindow(renderWindow.Get());
-
-  vtkNew<vtkSTLReader> reader;
-
-  reader->SetFileName("/Users/albert.t/Downloads/yuh/code/projects/ScanCraft/"
-                      "ScanCraft/src/Cube_3d_printing_sample.stl");
-  reader->Update();
-
-  vtkNew<vtkPolyDataMapper> mapper;
-  mapper->SetInputConnection(reader->GetOutputPort());
-
-  vtkNew<vtkActor> actor;
+  renderer = vtkSmartPointer<vtkRenderer>::New();
+  renderWindow->AddRenderer(renderer);
+  actor = vtkSmartPointer<vtkActor>::New();
+  mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   actor->SetMapper(mapper);
   actor->GetProperty()->SetEdgeVisibility(1);
-
-  vtkNew<vtkRenderer> renderer;
   renderer->AddActor(actor);
-
-  renderWindow->AddRenderer(renderer);
+}
+void MeshDisplay::displayMesh(vtkAlgorithmOutput *mesh) {
+  Q_ASSERT(mesh != nullptr);
+  mapper->SetInputConnection(mesh);
+  renderer->ResetCamera();
+  renderWindow->Render();
 }
