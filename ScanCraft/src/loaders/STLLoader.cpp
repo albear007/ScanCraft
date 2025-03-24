@@ -9,6 +9,10 @@ vtkAlgorithmOutput *STLLoader::load(const QStringList &files) {
     qWarning("STLLoader::load - Empty file list provided.");
     return nullptr;
   }
+  if (files.size() > 1) {
+    qWarning("STLLoader::load - Multiple files provided, only the first will "
+             "be loaded.");
+  }
 
   reader = vtkSmartPointer<vtkSTLReader>::New();
   reader->SetFileName(files.first().toStdString().c_str());
