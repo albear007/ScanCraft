@@ -1,11 +1,14 @@
 #pragma once
-#include <MeshDisplay.hpp>
+#include "MeshDisplay.hpp"
+#include "PhotogrammetryPipeline.hpp"
 #include <QAction>
 #include <QDockWidget>
 #include <QMainWindow>
 #include <QMenu>
 #include <QMenuBar>
 #include <QToolBar>
+#include <memory>
+#include <qaction.h>
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -38,10 +41,14 @@ private:
   // Actions
   QAction *openAction = nullptr;
   MeshDisplay *meshDisplay = nullptr;
+  QAction *processAction = nullptr;
+  std::unique_ptr<PhotogrammetryPipeline> pipeline;
 
   // // Initlize UI elements through these helpers.
   void createMenus();
-  void openSTL();
+  void openMesh();
+  void setupProcessAction();
+  void processImages();
   // void createDocks();
   // void createToolBar();
   // void createStatusBar();

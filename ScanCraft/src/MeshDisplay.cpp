@@ -23,7 +23,7 @@ MeshDisplay::MeshDisplay(QWidget *parent) : QVTKOpenGLNativeWidget(parent) {
   actor = vtkSmartPointer<vtkActor>::New();
   mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   actor->SetMapper(mapper);
-  actor->GetProperty()->SetEdgeVisibility(1);
+  actor->GetProperty()->SetEdgeVisibility(0);
   renderer->AddActor(actor);
 }
 void MeshDisplay::displayMesh(vtkAlgorithmOutput *mesh) {
