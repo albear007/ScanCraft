@@ -17,12 +17,10 @@ public:
   operator=(PhotogrammetryPipeline &&) noexcept = delete;
   ~PhotogrammetryPipeline() = default;
 
-  vtkAlgorithmOutput *createMesh(const QString &workspace);
+  std::string createMesh(const QString &workspace);
 
 private:
   colmap::AutomaticReconstructionController::Options options;
-
   std::unique_ptr<colmap::AutomaticReconstructionController> controller;
   std::unique_ptr<colmap::ReconstructionManager> manager;
-  vtkSmartPointer<vtkPLYReader> reader;
 };

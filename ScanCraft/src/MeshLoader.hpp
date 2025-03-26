@@ -1,5 +1,7 @@
 #pragma once
 #include <QString>
+#include <vtkAlgorithm.h>
+#include <vtkPLYReader.h>
 #include <vtkSTLReader.h>
 #include <vtkSmartPointer.h>
 class MeshLoader {
@@ -11,7 +13,9 @@ public:
   MeshLoader &operator=(MeshLoader &&) noexcept = delete;
   ~MeshLoader() = default;
   vtkAlgorithmOutput *loadSTL(const QString &file);
+  vtkAlgorithmOutput *loadPLY(const QString &file);
 
 private:
-  vtkSmartPointer<vtkSTLReader> reader;
+  vtkSmartPointer<vtkSTLReader> STLreader;
+  vtkSmartPointer<vtkPLYReader> PLYreader;
 };
