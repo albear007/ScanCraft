@@ -34,18 +34,18 @@ PhotogrammetryPipeline::createMesh(const QString &workspace) {
 
   // Reduce projection distance threshold → tighter spatial merging of nearby
   // points
-  meshOptions.max_proj_dist = 0; // Default: 20.0
+  meshOptions.max_proj_dist = 50; // Default: 20.0
 
   // Stricter depth agreement between points and cells
-  meshOptions.max_depth_dist = 0; // Default: 0.05
+  meshOptions.max_depth_dist = 0.001; // Default: 0.05
 
   // Lower visibility sigma to reduce reliance on uncertain (single-view) points
   meshOptions.visibility_sigma =
       std::numeric_limits<double>::min(); // Default: 3.0
 
   // Increase smoothness constraint
-  meshOptions.distance_sigma_factor = 1;  // Default: 1.0
-  meshOptions.quality_regularization = 1; // Default: 1.0
+  meshOptions.distance_sigma_factor = 3;  // Default: 1.0
+  meshOptions.quality_regularization = 0; // Default: 1.0
 
   // Stronger filtering of bad triangles (too long edges)
   meshOptions.max_side_length_factor = 20;     // Default: 25.0
