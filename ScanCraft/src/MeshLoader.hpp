@@ -1,10 +1,7 @@
 #pragma once
 #include <QString>
-#include <QVector>
-#include <vtkAlgorithm.h>
-#include <vtkPolyData.h>
+#include <vtkSTLReader.h>
 #include <vtkSmartPointer.h>
-
 class MeshLoader {
 public:
   MeshLoader() = default;
@@ -12,7 +9,9 @@ public:
   MeshLoader(MeshLoader &&) noexcept = delete;
   MeshLoader &operator=(const MeshLoader &) = delete;
   MeshLoader &operator=(MeshLoader &&) noexcept = delete;
-  virtual ~MeshLoader() = default;
+  ~MeshLoader() = default;
+  vtkAlgorithmOutput *loadSTL(const QString &file);
 
-  virtual vtkAlgorithmOutput *load(const QStringList &files) = 0;
+private:
+  vtkSmartPointer<vtkSTLReader> reader;
 };

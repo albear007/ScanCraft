@@ -4,7 +4,7 @@ set(CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY OFF)
 set(CMAKE_FIND_USE_SYSTEM_PREFIX_PATH OFF)
 
 find_package(Qt6 CONFIG REQUIRED COMPONENTS Widgets Gui)
-find_package(VTK REQUIRED COMPONENTS CommonCore GUISupportQt IOGeometry)
+find_package(VTK REQUIRED COMPONENTS CommonCore GUISupportQt IOGeometry IOPLY)
 find_package(colmap REQUIRED)
 qt_standard_project_setup()
 set(CMAKE_AUTOMOC ON)
@@ -17,9 +17,10 @@ qt_add_executable(${EXE_NAME}
   src/MainWindow.hpp
   src/MeshDisplay.hpp
   src/MeshDisplay.cpp
-  src/loaders/MeshLoader.hpp
-  src/loaders/STLLoader.hpp
-  src/loaders/STLLoader.cpp
+  src/MeshLoader.hpp
+  src/MeshLoader.cpp
+  src/PhotogrammetryPipeline.cpp
+  src/PhotogrammetryPipeline.hpp
 )
 
 
@@ -36,6 +37,7 @@ target_link_libraries(${EXE_NAME} PRIVATE
   VTK::CommonCore
   VTK::GUISupportQt
   VTK::IOGeometry
+  VTK::IOPLY
   colmap::colmap
 )
 target_include_directories(${EXE_NAME} PRIVATE

@@ -1,6 +1,6 @@
 #include "MainWindow.hpp"
 #include "MeshDisplay.hpp"
-#include "loaders/STLLoader.hpp"
+#include "PhotogrammetryPipeline.hpp"
 #include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -25,10 +25,13 @@ void MainWindow::setupOpenAction() {
 }
 
 void MainWindow::openSTL() {
-  QStringList fileNames = QFileDialog::getOpenFileNames(
-      this, tr("Open Files"), "",
-      tr("STL Files (*.stl);;PLY Files (*.ply);;All Files (*)"));
-  meshDisplay->displayMesh(STLLoader().load(fileNames));
+  // QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "",
+  //                                                 tr("STL Files (*.stl)"));
+  QString dir = QFileDialog::getExistingDirectory(
+      this, tr("Select Directory"),
+      "", // Optional: default path
+      QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+  meshDisplay->displayMesh(PhotogrammetryPipeline().createMesh(dir));
 }
 
 // void MainWindow::createDocks() {

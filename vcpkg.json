@@ -13,7 +13,10 @@
     },
     {
       "name": "colmap",
-      "default-features": false
+      "default-features": false,
+      "features": [
+        "cgal"
+      ]
     }
   ]
 }
