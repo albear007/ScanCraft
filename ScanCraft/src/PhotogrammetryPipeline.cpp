@@ -3,6 +3,7 @@
 #include <colmap/mvs/meshing.h>
 #include <colmap/scene/reconstruction_io.h>
 
+#include <limits>
 #include <vtkNew.h>
 #include <vtkPLYReader.h>
 
@@ -12,10 +13,13 @@ PhotogrammetryPipeline::createMesh(const QString &workspace) {
     qWarning("JPGLoader::load - Empty file list provided.");
     return nullptr;
   }
-  options.workspace_path = workspace.toStdString();
+  options.workspace_path = "/Users/albert.t/Downloads/test";
   options.image_path = workspace.toStdString();
+  options.num_threads = 2;
+  options.quality = colmap::AutomaticReconstructionController::Quality::EXTREME;
   options.use_gpu = false;
-  options.dense = false;
+  options.data_type =
+      colmap::AutomaticReconstructionController::DataType::INDIVIDUAL;
 
   manager = std::make_unique<colmap::ReconstructionManager>();
 
@@ -26,7 +30,26 @@ PhotogrammetryPipeline::createMesh(const QString &workspace) {
   controller->Start();
   controller->Wait();
 
-  colmap::mvs::PoissonMeshingOptions meshOptions;
+  colmap::mvs::DelaunayMeshingOptions meshOptions;
+
+  // Reduce projection distance threshold → tighter spatial merging of nearby
+  // points
+  meshOptions.max_proj_dist = 0; // Default: 20.0
+
+  // Stricter depth agreement between points and cells
+  meshOptions.max_depth_dist = 0; // Default: 0.05
+
+  // Lower visibility sigma to reduce reliance on uncertain (single-view) points
+  meshOptions.visibility_sigma =
+      std::numeric_limits<double>::min(); // Default: 3.0
+
+  // Increase smoothness constraint
+  meshOptions.distance_sigma_factor = 1;  // Default: 1.0
+  meshOptions.quality_regularization = 1; // Default: 1.0
+
+  // Stronger filtering of bad triangles (too long edges)
+  meshOptions.max_side_length_factor = 20;     // Default: 25.0
+  meshOptions.max_side_length_percentile = 70; // Default: 95.0
   std::string sparsePath = options.workspace_path + "/sparse/0";
   std::string meshOutput = sparsePath + "/meshed-poisson.ply";
   std::string meshOutput1 = sparsePath + "/meshed-poisson12.ply";
@@ -35,10 +58,10 @@ PhotogrammetryPipeline::createMesh(const QString &workspace) {
   reconstruction.ReadBinary(sparsePath);
 
   colmap::ExportPLY(reconstruction, meshOutput);
-  colmap::mvs::SparseDelaunayMeshing(meshOptions, meshOutput, meshOutput1);
+  colmap::mvs::SparseDelaunayMeshing(meshOptions, sparsePath, meshOutput1);
 
   reader = vtkSmartPointer<vtkPLYReader>::New();
-  reader->SetFileName(meshOutput.c_str());
+  reader->SetFileName(meshOutput1.c_str());
   reader->Update();
 
   return reader->GetOutputPort();
