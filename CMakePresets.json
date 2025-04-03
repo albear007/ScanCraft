@@ -88,7 +88,10 @@
       "inherits": "win64-cl-base",
       "displayName": "CL",
       "description": "Ninja Multi-Config + x64 MSVC",
-      "generator": "Ninja Multi-Config"
+      "generator": "Ninja Multi-Config",
+      "cacheVariables": {
+        "VCPKG_INSTALL_OPTIONS": "--x-buildtrees-root=C:/src/vcpkg"
+      }
     },
     {
       "name": "cl-vec-report",
