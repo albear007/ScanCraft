@@ -8,14 +8,23 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), meshDisplay(new MeshDisplay(this)) {
 
-  createMenus();
+  setupMenus();
+  setupLog();
 
   statusBar();
 
   this->setCentralWidget(meshDisplay);
 }
 
-void MainWindow::createMenus() {
+void MainWindow::setupLog() {
+  dockLog = new QDockWidget(tr("Log"), this);
+  this->addDockWidget(Qt::BottomDockWidgetArea, dockLog);
+  dockLog->setWidget(logBox = new QPlainTextEdit(this));
+  logBox->setReadOnly(true);
+  logBox->setPlainText("Log: std::ccout for colmap, other logs will be here.");
+}
+
+void MainWindow::setupMenus() {
   fileMenu = menuBar()->addMenu(tr("&File"));
   setupOpenAction();
   fileMenu->addAction(openAction);
