@@ -7,8 +7,10 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QToolBar>
+#include <Qplaintextedit.h>
 #include <memory>
 #include <qaction.h>
+#include <qdockwidget.h>
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -31,12 +33,16 @@ private:
   // // Docks
   // QDockWidget *dockImageProcessing = nullptr;
   // QDockWidget *dockSystemControl = nullptr;
+  QDockWidget *dockLog = nullptr;
 
   // // Toolbar
   // QToolBar *toolBar = nullptr;
 
   // //  User defined mesh plot
   // MeshDisplay *meshDisplay = nullptr;
+
+  // Log box
+  QPlainTextEdit *logBox = nullptr;
 
   // Actions
   QAction *openAction = nullptr;
@@ -45,7 +51,8 @@ private:
   std::unique_ptr<PhotogrammetryPipeline> pipeline;
 
   // // Initlize UI elements through these helpers.
-  void createMenus();
+  void setupMenus();
+  void setupLog();
   void openMesh();
   void setupProcessAction();
   void processImages();
