@@ -45,7 +45,7 @@ private:
   std::unique_ptr<PhotogrammetryPipeline> pipeline;
 
   // // Initlize UI elements through these helpers.
-  void createMenus();
+  void setupMenus();
   void openMesh();
   void setupProcessAction();
   void processImages();

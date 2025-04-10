@@ -8,14 +8,14 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), meshDisplay(new MeshDisplay(this)) {
 
-  createMenus();
+  setupMenus();
 
   statusBar();
 
   this->setCentralWidget(meshDisplay);
 }
 
-void MainWindow::createMenus() {
+void MainWindow::setupMenus() {
   fileMenu = menuBar()->addMenu(tr("&File"));
   setupOpenAction();
   fileMenu->addAction(openAction);

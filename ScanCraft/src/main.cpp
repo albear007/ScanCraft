@@ -9,8 +9,8 @@ auto main(int argc, char **argv) -> int {
 
   QSurfaceFormat::setDefaultFormat(QVTKOpenGLNativeWidget::defaultFormat());
 
-  QApplication::setStyle("Fusion");
   QApplication app(argc, argv);
+  QApplication::setStyle("Fusion");
 
   MainWindow mainWindow;
   mainWindow.showMaximized();
