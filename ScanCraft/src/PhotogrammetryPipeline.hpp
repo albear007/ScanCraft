@@ -1,15 +1,10 @@
 #pragma once
-#include <QString>
-#include <colmap/controllers/automatic_reconstruction.h>
-#include <colmap/scene/reconstruction_manager.h>
-#include <memory>
-#include <vtkAlgorithmOutput.h>
-#include <vtkPLYReader.h>
-#include <vtkSmartPointer.h>
 
-class PhotogrammetryPipeline {
+#include <qwidget.h>
+class PhotogrammetryPipeline : public QObject {
+  Q_OBJECT
 public:
-  PhotogrammetryPipeline() = default;
+  explicit PhotogrammetryPipeline(QObject *parent = nullptr);
   PhotogrammetryPipeline(const PhotogrammetryPipeline &) = delete;
   PhotogrammetryPipeline(PhotogrammetryPipeline &&) noexcept = delete;
   PhotogrammetryPipeline &operator=(const PhotogrammetryPipeline &) = delete;
@@ -17,10 +12,13 @@ public:
   operator=(PhotogrammetryPipeline &&) noexcept = delete;
   ~PhotogrammetryPipeline() = default;
 
-  std::string createMesh(const QString &workspace);
+  [[nodiscard]] QString &getWorkspacePath();
+
+signals:
+public slots:
+  void processImages();
+  void setWorkspacePath(const QString &workspacePath);
 
 private:
-  colmap::AutomaticReconstructionController::Options options;
-  std::unique_ptr<colmap::AutomaticReconstructionController> controller;
-  std::unique_ptr<colmap::ReconstructionManager> manager;
+  QString workspacePath;
 };
