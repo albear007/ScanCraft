@@ -5,6 +5,8 @@
 #include <vtkSTLReader.h>
 #include <vtkSmartPointer.h>
 
+MeshLoader::MeshLoader(QObject *parent) : QObject(parent) {}
+
 vtkAlgorithmOutput *MeshLoader::loadSTL(const QString &file) {
   if (file.isEmpty()) {
     qWarning("STLLoader::load - Empty file list provided.");

@@ -1,12 +1,14 @@
 #pragma once
 #include <QString>
+#include <qobject.h>
 #include <vtkAlgorithm.h>
 #include <vtkPLYReader.h>
 #include <vtkSTLReader.h>
 #include <vtkSmartPointer.h>
-class MeshLoader {
+class MeshLoader : QObject {
+  Q_OBJECT
 public:
-  MeshLoader() = default;
+  explicit MeshLoader(QObject *parent = nullptr);
   MeshLoader(const MeshLoader &) = delete;
   MeshLoader(MeshLoader &&) noexcept = delete;
   MeshLoader &operator=(const MeshLoader &) = delete;
