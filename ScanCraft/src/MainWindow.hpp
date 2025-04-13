@@ -1,16 +1,13 @@
 #pragma once
 #include "MeshDisplay.hpp"
+#include "MeshLoader.hpp"
 #include "PhotogrammetryPipeline.hpp"
 #include <QAction>
 #include <QDockWidget>
 #include <QMainWindow>
 #include <QMenu>
 #include <QMenuBar>
-#include <QToolBar>
 #include <Qplaintextedit.h>
-#include <memory>
-#include <qaction.h>
-#include <qdockwidget.h>
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -23,7 +20,9 @@ public:
   ~MainWindow() override = default;
 
 signals:
+
 public slots:
+  void appendLog(const QString &message);
 
 protected:
 private:
@@ -31,31 +30,32 @@ private:
   QMenu *fileMenu = nullptr;
 
   // // Docks
-  // QDockWidget *dockImageProcessing = nullptr;
+  QDockWidget *dockImageProcessing = nullptr;
   // QDockWidget *dockSystemControl = nullptr;
   QDockWidget *dockLog = nullptr;
 
   // // Toolbar
   // QToolBar *toolBar = nullptr;
 
-  // //  User defined mesh plot
-  // MeshDisplay *meshDisplay = nullptr;
+  // //  User defined
+  MeshDisplay *meshDisplay = nullptr;
+  PhotogrammetryPipeline *pipeline = nullptr;
+  MeshLoader *meshLoader = nullptr;
 
   // Log box
   QPlainTextEdit *logBox = nullptr;
 
   // Actions
   QAction *openAction = nullptr;
-  MeshDisplay *meshDisplay = nullptr;
   QAction *processAction = nullptr;
-  std::unique_ptr<PhotogrammetryPipeline> pipeline;
+  QAction *setWorkspaceAction = nullptr;
 
   // // Initlize UI elements through these helpers.
   void setupMenus();
   void setupLog();
-  void openMesh();
+  void setupImageProcessing();
   void setupProcessAction();
-  void processImages();
+  void setupSetWorkspaceAction();
   // void createDocks();
   // void createToolBar();
   // void createStatusBar();
