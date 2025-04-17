@@ -33,6 +33,7 @@ private:
   QDockWidget *dockImageProcessing = nullptr;
   // QDockWidget *dockSystemControl = nullptr;
   QDockWidget *dockLog = nullptr;
+  QDockWidget *dockPipelineController = nullptr;
 
   // // Toolbar
   // QToolBar *toolBar = nullptr;
@@ -56,9 +57,10 @@ private:
   void setupImageProcessing();
   void setupProcessAction();
   void setupSetWorkspaceAction();
+  void setupOpenAction();
+  void setupPipelineController();
   // void createDocks();
   // void createToolBar();
   // void createStatusBar();
   // void createCentralWidget();
-  void setupOpenAction();
 };

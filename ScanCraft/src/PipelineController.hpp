@@ -2,8 +2,10 @@
 
 #include "ReconstructionOptions.hpp"
 #include <QCheckBox>
+#include <QComboBox>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QSpinBox>
 #include <QWidget>
 
 class PipelineController : public QWidget {
@@ -25,8 +27,29 @@ public slots:
 
 private:
   ReconstructionOptions reconOpts;
-  QLineEdit *databasePathEdit;
+  QSpinBox *randomSeedBox;
+  QCheckBox *logToStderrCheck;
+  QSpinBox *logLevelBox;
+  QLineEdit *projectPathEdit;
+  QLineEdit *workspacePathEdit;
   QLineEdit *imagePathEdit;
-  QCheckBox *siftOptionCheck;
+  QLineEdit *maskPathEdit;
+  QLineEdit *vocabTreePathEdit;
+  QComboBox *dataTypeBox;
+  QComboBox *qualityBox;
+  QLineEdit *cameraModelEdit;
+  QCheckBox *singleCameraCheck;
+  QCheckBox *singleCameraPerFolderCheck;
+  QLineEdit *cameraParamsEdit;
+  QCheckBox *extractionCheck;
+  QCheckBox *matchingCheck;
+  QCheckBox *sparseCheck;
+  QCheckBox *denseCheck;
+  QComboBox *mesherBox;
+  QSpinBox *numThreadsBox;
+  QCheckBox *useGPUCheck;
+  QSpinBox *gpuIndexBox;
+
   QPushButton *runButton;
+  [[nodiscard]] ReconstructionOptions getOptions() const;
 };

@@ -1,5 +1,6 @@
 #include "MainWindow.hpp"
 #include "MeshDisplay.hpp"
+#include "PipelineController.hpp"
 #include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -9,12 +10,18 @@ MainWindow::MainWindow(QWidget *parent)
 
   setupMenus();
   setupLog();
+  setupPipelineController();
 
   statusBar();
 
   this->setCentralWidget(meshDisplay);
 }
 
+void MainWindow::setupPipelineController() {
+  dockPipelineController = new QDockWidget(tr("Pipeline Controller"), this);
+  this->addDockWidget(Qt::LeftDockWidgetArea, dockPipelineController);
+  dockPipelineController->setWidget(new PipelineController(this));
+}
 void MainWindow::setupLog() {
   dockLog = new QDockWidget(tr("Log"), this);
   this->addDockWidget(Qt::BottomDockWidgetArea, dockLog);

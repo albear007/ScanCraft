@@ -1,6 +1,6 @@
 #pragma once
+#include <QObject>
 
-#include <qwidget.h>
 class PhotogrammetryPipeline : public QObject {
   Q_OBJECT
 public:

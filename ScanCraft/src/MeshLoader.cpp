@@ -1,6 +1,4 @@
 #include "MeshLoader.hpp"
-#include <QFile>
-#include <vtkAlgorithm.h>
 #include <vtkAlgorithmOutput.h>
 #include <vtkSTLReader.h>
 #include <vtkSmartPointer.h>

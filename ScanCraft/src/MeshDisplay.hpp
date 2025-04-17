@@ -4,11 +4,7 @@
 #include <qtmetamacros.h>
 #include <vtkActor.h>
 #include <vtkAlgorithm.h>
-#include <vtkInteractorStyle.h>
-#include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
 
 class MeshDisplay : public QVTKOpenGLNativeWidget {
