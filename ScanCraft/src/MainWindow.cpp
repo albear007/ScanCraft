@@ -2,13 +2,14 @@
 #include "MeshDisplay.hpp"
 #include "PipelineController.hpp"
 #include <QFileDialog>
+#include <QScrollBar>
 
 // Main GUI Window: Contains the GUI elements and other logic and controls.
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), meshDisplay(new MeshDisplay(this)),
       pipeline(new PhotogrammetryPipeline(this)),
       meshLoader(new MeshLoader(this)),
-      dockPipelineController(new QDockWidget(tr("Pipeline Controller"), this)),
+      dockPipelineController(new PipelineController(this)),
       dockLog(new QDockWidget(tr("Log"), this)),
       openAction(new QAction(tr("&Open Mesh"), this)),
       processAction(new QAction(tr("&Process Images"), this)),
@@ -25,7 +26,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::setupPipelineController() {
   this->addDockWidget(Qt::LeftDockWidgetArea, dockPipelineController);
-  dockPipelineController->setWidget(new PipelineController(this));
 }
 void MainWindow::setupLog() {
   this->addDockWidget(Qt::BottomDockWidgetArea, dockLog);
@@ -36,6 +36,7 @@ void MainWindow::setupLog() {
   this->logMessage("Welcome to ScanCraft!");
   this->logMessage("ScanCraft is a photogrammetry software.");
   this->logMessage("Please select a mesh file to get started.");
+  this->logMessage(dockPipelineController->getOptions().toString());
 }
 
 void MainWindow::setupMenus() {

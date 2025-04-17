@@ -1,11 +1,15 @@
 #include "PipelineController.hpp"
+#include "MainWindow.hpp"
 #include <QFormLayout>
+#include <QScrollBar>
 #include <QVBoxLayout>
-#include <qspinbox.h>
+#include <qdebug.h>
+#include <qstringliteral.h>
 
 PipelineController::PipelineController(QWidget *parent)
-    : QWidget(parent), randomSeedBox(new QSpinBox(this)),
-      logToStderrCheck(new QCheckBox("Log to Stderr", this)),
+    : QDockWidget("Pipeline Controller", parent),
+      randomSeedBox(new QSpinBox(this)),
+      logToStderrCheck(new QCheckBox("Log to StdErr", this)),
       logLevelBox(new QSpinBox(this)), projectPathEdit(new QLineEdit(this)),
       workspacePathEdit(new QLineEdit(this)),
       imagePathEdit(new QLineEdit(this)), maskPathEdit(new QLineEdit(this)),
@@ -22,7 +26,8 @@ PipelineController::PipelineController(QWidget *parent)
       numThreadsBox(new QSpinBox(this)),
       useGPUCheck(new QCheckBox("Use GPU", this)),
       gpuIndexBox(new QSpinBox(this)), runButton(new QPushButton("Run", this)) {
-  // Set initial values
+
+  // Set initial values (same as before, omitted for brevity)
   randomSeedBox->setMaximum(999999);
   randomSeedBox->setValue(reconOpts.randomSeed);
   logToStderrCheck->setChecked(reconOpts.logToStderr);
@@ -52,64 +57,128 @@ PipelineController::PipelineController(QWidget *parent)
   gpuIndexBox->setRange(-1, 15);
   gpuIndexBox->setValue(reconOpts.gpuIndex);
 
-  // Connections to update struct
+  // Connections with logging
   connect(randomSeedBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
-          [this](int val) { reconOpts.randomSeed = val; });
-  connect(logToStderrCheck, &QCheckBox::toggled, this,
-          [this](bool val) { reconOpts.logToStderr = val; });
+          [this](int val) {
+            reconOpts.randomSeed = val;
+            logChange("Random Seed", val);
+          });
+  connect(logToStderrCheck, &QCheckBox::checkStateChanged, this,
+          [this](int val) {
+            bool state = (val == Qt::Checked);
+            reconOpts.logToStderr = state;
+            logChange("Log to StdErr", state);
+          });
   connect(logLevelBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
-          [this](int val) { reconOpts.logLevel = val; });
+          [this](int val) {
+            reconOpts.logLevel = val;
+            logChange("Log Level", val);
+          });
   connect(projectPathEdit, &QLineEdit::textChanged, this,
-          [this](const QString &text) { reconOpts.projectPath = text; });
+          [this](const QString &text) {
+            reconOpts.projectPath = text;
+            logChange("Project Path", text);
+          });
   connect(workspacePathEdit, &QLineEdit::textChanged, this,
-          [this](const QString &text) { reconOpts.workspacePath = text; });
+          [this](const QString &text) {
+            reconOpts.workspacePath = text;
+            logChange("Workspace Path", text);
+          });
   connect(imagePathEdit, &QLineEdit::textChanged, this,
-          [this](const QString &text) { reconOpts.imagePath = text; });
+          [this](const QString &text) {
+            reconOpts.imagePath = text;
+            logChange("Image Path", text);
+          });
   connect(maskPathEdit, &QLineEdit::textChanged, this,
-          [this](const QString &text) { reconOpts.maskPath = text; });
+          [this](const QString &text) {
+            reconOpts.maskPath = text;
+            logChange("Mask Path", text);
+          });
   connect(vocabTreePathEdit, &QLineEdit::textChanged, this,
-          [this](const QString &text) { reconOpts.vocabTreePath = text; });
+          [this](const QString &text) {
+            reconOpts.vocabTreePath = text;
+            logChange("Vocab Tree Path", text);
+          });
   connect(dataTypeBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
           this, [this](int index) {
             reconOpts.colorMode =
                 static_cast<ReconstructionOptions::dataType>(index);
+            logChange("Data Type", dataTypeBox->itemText(index));
           });
   connect(qualityBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
           [this](int index) {
             reconOpts.quality =
                 static_cast<ReconstructionOptions::Quality>(index);
+            logChange("Quality", qualityBox->itemText(index));
           });
   connect(cameraModelEdit, &QLineEdit::textChanged, this,
-          [this](const QString &text) { reconOpts.cameraModel = text; });
-  connect(singleCameraCheck, &QCheckBox::toggled, this,
-          [this](bool val) { reconOpts.singleCamera = val; });
-  connect(singleCameraPerFolderCheck, &QCheckBox::toggled, this,
-          [this](bool val) { reconOpts.singleCameraPerFolder = val; });
+          [this](const QString &text) {
+            reconOpts.cameraModel = text;
+            logChange("Camera Model", text);
+          });
+  connect(singleCameraCheck, &QCheckBox::checkStateChanged, this,
+          [this](int val) {
+            bool state = (val == Qt::Checked);
+            reconOpts.singleCamera = state;
+            logChange("Single Camera", state);
+          });
+  connect(singleCameraPerFolderCheck, &QCheckBox::checkStateChanged, this,
+          [this](int val) {
+            bool state = (val == Qt::Checked);
+            reconOpts.singleCameraPerFolder = state;
+            logChange("Single Camera Per Folder", state);
+          });
   connect(cameraParamsEdit, &QLineEdit::textChanged, this,
-          [this](const QString &text) { reconOpts.cameraParams = text; });
-  connect(extractionCheck, &QCheckBox::toggled, this,
-          [this](bool val) { reconOpts.extraction = val; });
-  connect(matchingCheck, &QCheckBox::toggled, this,
-          [this](bool val) { reconOpts.matching = val; });
-  connect(sparseCheck, &QCheckBox::toggled, this,
-          [this](bool val) { reconOpts.sparse = val; });
-  connect(denseCheck, &QCheckBox::toggled, this,
-          [this](bool val) { reconOpts.dense = val; });
+          [this](const QString &text) {
+            reconOpts.cameraParams = text;
+            logChange("Camera Params", text);
+          });
+  connect(extractionCheck, &QCheckBox::checkStateChanged, this,
+          [this](int val) {
+            bool state = (val == Qt::Checked);
+            reconOpts.extraction = state;
+            logChange("Extraction", state);
+          });
+  connect(matchingCheck, &QCheckBox::checkStateChanged, this, [this](int val) {
+    bool state = (val == Qt::Checked);
+    reconOpts.matching = state;
+    logChange("Matching", state);
+  });
+  connect(sparseCheck, &QCheckBox::checkStateChanged, this, [this](int val) {
+    bool state = (val == Qt::Checked);
+    reconOpts.sparse = state;
+    logChange("Sparse", state);
+  });
+  connect(denseCheck, &QCheckBox::checkStateChanged, this, [this](int val) {
+    bool state = (val == Qt::Checked);
+    reconOpts.dense = state;
+    logChange("Dense", state);
+  });
   connect(mesherBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
           [this](int index) {
             reconOpts.meshType =
                 static_cast<ReconstructionOptions::mesher>(index);
+            logChange("Mesher", mesherBox->itemText(index));
           });
   connect(numThreadsBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
-          [this](int val) { reconOpts.numThreads = val; });
-  connect(useGPUCheck, &QCheckBox::toggled, this,
-          [this](bool val) { reconOpts.useGPU = val; });
+          [this](int val) {
+            reconOpts.numThreads = val;
+            logChange("Num Threads", val);
+          });
+  connect(useGPUCheck, &QCheckBox::checkStateChanged, this, [this](int val) {
+    bool state = (val == Qt::Checked);
+    reconOpts.useGPU = state;
+    qDebug() << "Use GPU:" << state;
+    logChange("Use GPU", state);
+  });
   connect(gpuIndexBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
-          [this](int val) { reconOpts.gpuIndex = val; });
+          [this](int val) {
+            reconOpts.gpuIndex = val;
+            logChange("GPU Index", val);
+          });
   connect(runButton, &QPushButton::clicked, this,
           &PipelineController::onRunButtonClicked);
 
-  // Layout
   auto *form = new QFormLayout;
   form->addRow("Random Seed", randomSeedBox);
   form->addRow(logToStderrCheck);
@@ -134,10 +203,12 @@ PipelineController::PipelineController(QWidget *parent)
   form->addRow(useGPUCheck);
   form->addRow("GPU Index", gpuIndexBox);
 
-  auto *mainLayout = new QVBoxLayout(this);
+  auto *container = new QWidget(this);
+  auto *mainLayout = new QVBoxLayout(container);
   mainLayout->addLayout(form);
   mainLayout->addWidget(runButton);
-  setLayout(mainLayout);
+  container->setLayout(mainLayout);
+  setWidget(container);
 }
 
 PipelineController::~PipelineController() = default;
@@ -146,4 +217,18 @@ void PipelineController::onRunButtonClicked() { emit runReconstruction(); }
 
 ReconstructionOptions PipelineController::getOptions() const {
   return reconOpts;
+}
+
+void PipelineController::logChange(const QString &label, const QString &value) {
+  if (auto *mainWin = qobject_cast<MainWindow *>(this->window())) {
+    emit mainWin->logMessage(label + " set to: " + value);
+  }
+}
+
+void PipelineController::logChange(const QString &label, int value) {
+  logChange(label, QString::number(value));
+}
+
+void PipelineController::logChange(const QString &label, bool value) {
+  logChange(label, value ? QStringLiteral("true") : QStringLiteral("false"));
 }

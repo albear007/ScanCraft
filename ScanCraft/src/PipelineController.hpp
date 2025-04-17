@@ -3,13 +3,14 @@
 #include "ReconstructionOptions.hpp"
 #include <QCheckBox>
 #include <QComboBox>
+#include <QDockWidget>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QSpinBox>
-#include <QWidget>
 
-class PipelineController : public QWidget {
+class PipelineController : public QDockWidget {
   Q_OBJECT
+
 public:
   explicit PipelineController(QWidget *parent = nullptr);
   ~PipelineController() override;
@@ -18,8 +19,9 @@ public:
   PipelineController &operator=(const PipelineController &) = delete;
   PipelineController &operator=(PipelineController &&) = delete;
 
+  [[nodiscard]] ReconstructionOptions getOptions() const;
+
 signals:
-  // Signal to indicate that the user has pressed the "Run" button.
   void runReconstruction();
 
 public slots:
@@ -27,6 +29,7 @@ public slots:
 
 private:
   ReconstructionOptions reconOpts;
+
   QSpinBox *randomSeedBox;
   QCheckBox *logToStderrCheck;
   QSpinBox *logLevelBox;
@@ -49,7 +52,9 @@ private:
   QSpinBox *numThreadsBox;
   QCheckBox *useGPUCheck;
   QSpinBox *gpuIndexBox;
-
   QPushButton *runButton;
-  [[nodiscard]] ReconstructionOptions getOptions() const;
+
+  void logChange(const QString &label, const QString &value);
+  void logChange(const QString &label, int value);
+  void logChange(const QString &label, bool value);
 };

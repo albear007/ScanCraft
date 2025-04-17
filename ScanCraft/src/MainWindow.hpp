@@ -2,6 +2,7 @@
 #include "MeshDisplay.hpp"
 #include "MeshLoader.hpp"
 #include "PhotogrammetryPipeline.hpp"
+#include "PipelineController.hpp"
 #include <QAction>
 #include <QDockWidget>
 #include <QMainWindow>
@@ -33,7 +34,7 @@ private:
   QDockWidget *dockImageProcessing = nullptr;
   // QDockWidget *dockSystemControl = nullptr;
   QDockWidget *dockLog = nullptr;
-  QDockWidget *dockPipelineController = nullptr;
+  PipelineController *dockPipelineController = nullptr;
 
   // // Toolbar
   // QToolBar *toolBar = nullptr;
