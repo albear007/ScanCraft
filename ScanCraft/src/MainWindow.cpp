@@ -3,10 +3,16 @@
 #include "PipelineController.hpp"
 #include <QFileDialog>
 
+// Main GUI Window: Contains the GUI elements and other logic and controls.
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), meshDisplay(new MeshDisplay(this)),
       pipeline(new PhotogrammetryPipeline(this)),
-      meshLoader(new MeshLoader(this)) {
+      meshLoader(new MeshLoader(this)),
+      dockPipelineController(new QDockWidget(tr("Pipeline Controller"), this)),
+      dockLog(new QDockWidget(tr("Log"), this)),
+      openAction(new QAction(tr("&Open Mesh"), this)),
+      processAction(new QAction(tr("&Process Images"), this)),
+      setWorkspaceAction(new QAction(tr("&Set Workspace"), this)) {
 
   setupMenus();
   setupLog();
@@ -18,12 +24,10 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::setupPipelineController() {
-  dockPipelineController = new QDockWidget(tr("Pipeline Controller"), this);
   this->addDockWidget(Qt::LeftDockWidgetArea, dockPipelineController);
   dockPipelineController->setWidget(new PipelineController(this));
 }
 void MainWindow::setupLog() {
-  dockLog = new QDockWidget(tr("Log"), this);
   this->addDockWidget(Qt::BottomDockWidgetArea, dockLog);
   dockLog->setWidget(logBox = new QPlainTextEdit(this));
   logBox->setReadOnly(true);
@@ -42,7 +46,6 @@ void MainWindow::setupMenus() {
 }
 
 void MainWindow::setupOpenAction() {
-  openAction = new QAction(tr("&Open Mesh"), this);
   connect(openAction, &QAction::triggered, this, [this]() {
     // Open a file dialog to let the user select a mesh file.
     QString fileName = QFileDialog::getOpenFileName(
@@ -63,13 +66,11 @@ void MainWindow::setupOpenAction() {
 }
 
 void MainWindow::setupProcessAction() {
-  processAction = new QAction(tr("&Process Images"), this);
   connect(processAction, &QAction::triggered, pipeline,
           &PhotogrammetryPipeline::processImages);
 }
 
 void MainWindow::setupSetWorkspaceAction() {
-  setWorkspaceAction = new QAction(tr("&Set Workspace"), this);
   connect(setWorkspaceAction, &QAction::triggered, this, [this]() {
     // Open a dialog to let the user select a directory for the workspace.
     QString workspacePath = QFileDialog::getExistingDirectory(
