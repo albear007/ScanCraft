@@ -20,7 +20,7 @@ public:
   ~MainWindow() override = default;
 
 signals:
-
+  void logMessage(const QString &message);
 public slots:
   void appendLog(const QString &message);
 

@@ -32,7 +32,10 @@ void MainWindow::setupLog() {
   dockLog->setWidget(logBox = new QPlainTextEdit(this));
   logBox->setReadOnly(true);
   logBox->setPlainText("Log: std::ccout for colmap, other logs will be here.");
-  connect(meshDisplay, &MeshDisplay::logMessage, this, &MainWindow::appendLog);
+  connect(this, &MainWindow::logMessage, this, &MainWindow::appendLog);
+  this->logMessage("Welcome to ScanCraft!");
+  this->logMessage("ScanCraft is a photogrammetry software.");
+  this->logMessage("Please select a mesh file to get started.");
 }
 
 void MainWindow::setupMenus() {
