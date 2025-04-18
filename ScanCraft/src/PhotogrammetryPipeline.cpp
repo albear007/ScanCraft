@@ -1,50 +1,112 @@
 #include "PhotogrammetryPipeline.hpp"
-#include "MeshLoader.hpp"
-#include <colmap/controllers/automatic_reconstruction.h>
-#include <colmap/mvs/meshing.h>
-#include <colmap/scene/reconstruction_io.h>
-#include <limits>
-#include <vtkNew.h>
+#include <QFileInfo>
 
-std::string PhotogrammetryPipeline::createMesh(const QString &workspace) {
-  if (workspace.isEmpty()) {
-    qWarning("JPGLoader::load - Empty file list provided.");
-    return nullptr;
+PhotogrammetryPipeline::PhotogrammetryPipeline(QObject *parent)
+    : QObject(parent) {}
+
+/*------------------------------------------------------------*/
+void PhotogrammetryPipeline::runReconstruction(const ReconstructionOptions &o) {
+  emit logMessage("▶  Building COLMAP command…");
+  startProcess(toColmapArgs(o));
+}
+
+/*------------------------------------------------------------*/
+void PhotogrammetryPipeline::startProcess(const QStringList &args) {
+  const QString exe = QStringLiteral(COLMAP_EXECUTABLE);
+  if (!QFileInfo::exists(exe)) {
+    emit logMessage("❌  COLMAP executable not found: " + exe);
+    return;
   }
-  // Set up the reconstruction options for now, pass in and maintain state of
-  // options later as struct; also get rid of magic numbers
-  options.workspace_path = workspace.toStdString();
-  options.image_path = workspace.toStdString();
-  options.num_threads = 2;
-  options.quality = colmap::AutomaticReconstructionController::Quality::EXTREME;
-  options.use_gpu = false;
-  options.data_type =
-      colmap::AutomaticReconstructionController::DataType::INDIVIDUAL;
 
-  manager = std::make_unique<colmap::ReconstructionManager>();
-  controller = std::make_unique<colmap::AutomaticReconstructionController>(
-      options, std::shared_ptr<colmap::ReconstructionManager>(
-                   manager.get(), [](colmap::ReconstructionManager *) {}));
+  auto *p = new QProcess(this);
+  p->setProgram(exe);
+  p->setArguments(args);
+  p->setProcessChannelMode(QProcess::SeparateChannels);
 
-  controller->Start();
-  controller->Wait();
+  connect(p, &QProcess::readyReadStandardOutput, this, [this, p]() {
+    emit logMessage(
+        QString::fromLocal8Bit(p->readAllStandardOutput()).trimmed());
+  });
+  connect(p, &QProcess::readyReadStandardError, this, [this, p]() {
+    emit logMessage(
+        "[stderr] " +
+        QString::fromLocal8Bit(p->readAllStandardError()).trimmed());
+  });
+  connect(p, &QProcess::finished, this,
+          [this, p](int c, QProcess::ExitStatus s) {
+            emit logMessage(
+                QString("[COLMAP finished] exit %1 (%2)")
+                    .arg(c)
+                    .arg(s == QProcess::NormalExit ? "normal" : "crashed"));
+            p->deleteLater();
+          });
+  connect(p, &QProcess::errorOccurred, this,
+          [this, p](QProcess::ProcessError e) {
+            emit logMessage(QString("[COLMAP error] %1").arg(int(e)));
+            p->deleteLater();
+          });
 
-  colmap::mvs::DelaunayMeshingOptions meshOptions;
+  emit logMessage("▶  Starting COLMAP …");
+  emit logMessage("▶  Executing: " + exe + " " + args.join(' '));
+  p->start();
+}
 
-  // Set the meshing options, pass in and maintain state of options later as
-  // struct
-  meshOptions.max_proj_dist = 50;
-  meshOptions.max_depth_dist = 0.001; // Default: 0.05
-  meshOptions.visibility_sigma =
-      std::numeric_limits<double>::min();      // Default: 3.0
-  meshOptions.distance_sigma_factor = 3;       // Default: 1.0
-  meshOptions.quality_regularization = 0;      // Default: 1.0
-  meshOptions.max_side_length_factor = 25;     // Default: 25.0
-  meshOptions.max_side_length_percentile = 95; // Default: 95.0
+/*------------------------------------------------------------*/
+QStringList
+PhotogrammetryPipeline::toColmapArgs(const ReconstructionOptions &o) {
+  QStringList args;
+  args << "automatic_reconstructor";
+  // Helper lambdas
+  auto addPath = [&args](const char *flag, const QString &value) {
+    if (!value.isEmpty())
+      args << flag << value;
+  };
 
-  std::string sparsePath = options.workspace_path + "/sparse/0";
-  std::string meshOutput = sparsePath + "out.ply";
+  auto addBool = [&args](const char *flag, bool value) {
+    args << flag << (value ? "1" : "0");
+  };
 
-  colmap::mvs::SparseDelaunayMeshing(meshOptions, sparsePath, meshOutput);
-  return meshOutput;
+  auto addInt = [&args](const char *flag, int value) {
+    args << flag << QString::number(value);
+  };
+
+  // Paths
+  addPath("--project_path", o.projectPath);
+  addPath("--workspace_path", o.workspacePath);
+  addPath("--image_path", o.imagePath);
+  addPath("--mask_path", o.maskPath);
+  addPath("--vocab_tree_path", o.vocabTreePath);
+
+  // Basic options
+  addInt("--random_seed", o.randomSeed);
+  addBool("--log_to_stderr", o.logToStderr);
+  addInt("--log_level", o.logLevel);
+
+  // Enums
+  static const char *typeStr[] = {"individual", "video", "internet"};
+  static const char *qualStr[] = {"low", "medium", "high", "extreme"};
+  static const char *meshStr[] = {"poisson", "delaunay"};
+
+  args << "--data_type" << typeStr[int(o.type)];
+  args << "--quality" << qualStr[int(o.quality)];
+  args << "--mesher" << meshStr[int(o.meshType)];
+
+  // Camera
+  addBool("--single_camera", o.singleCamera);
+  addBool("--single_camera_per_folder", o.singleCameraPerFolder);
+  addPath("--camera_model", o.cameraModel);
+  addPath("--camera_params", o.cameraParams);
+
+  // Pipeline steps
+  addBool("--extraction", o.extraction);
+  addBool("--matching", o.matching);
+  addBool("--sparse", o.sparse);
+  addBool("--dense", o.dense);
+
+  // Performance
+  addInt("--num_threads", o.numThreads);
+  addBool("--use_gpu", o.useGPU);
+  addInt("--gpu_index", o.gpuIndex);
+
+  return args;
 }

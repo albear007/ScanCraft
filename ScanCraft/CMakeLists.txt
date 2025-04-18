@@ -1,9 +1,17 @@
 set(EXE_NAME ScanCraft)
 
 
+
+
 find_package(Qt6 CONFIG REQUIRED COMPONENTS Widgets Gui)
+
 find_package(VTK REQUIRED COMPONENTS CommonCore GUISupportQt IOGeometry IOPLY)
-find_package(colmap REQUIRED)
+
+find_program(COLMAP_EXECUTABLE
+  NAMES colmap colmap.exe
+  HINTS "${VCPKG_ROOT}/installed/${VCPKG_TARGET_TRIPLET}/bin"
+)
+
 qt_standard_project_setup()
 set(CMAKE_AUTOMOC ON)
 
@@ -19,6 +27,9 @@ qt_add_executable(${EXE_NAME}
   src/MeshLoader.cpp
   src/PhotogrammetryPipeline.cpp
   src/PhotogrammetryPipeline.hpp
+  src/PipelineController.hpp
+  src/PipelineController.cpp
+  src/ReconstructionOptions.hpp
 )
 
 
@@ -36,12 +47,17 @@ target_link_libraries(${EXE_NAME} PRIVATE
   VTK::GUISupportQt
   VTK::IOGeometry
   VTK::IOPLY
-  colmap::colmap
 )
 target_include_directories(${EXE_NAME} PRIVATE
   src
   
 )
+if(COLMAP_EXECUTABLE)
+  message(STATUS "Found COLMAP at: ${COLMAP_EXECUTABLE}")
+  add_compile_definitions(COLMAP_EXECUTABLE="${COLMAP_EXECUTABLE}")
+else()
+  message(FATAL_ERROR "COLMAP not found!")
+endif()
 
 if (WIN32)
     add_compile_definitions(_USE_MATH_DEFINES)

@@ -1,26 +1,22 @@
 #pragma once
-#include <QString>
-#include <colmap/controllers/automatic_reconstruction.h>
-#include <colmap/scene/reconstruction_manager.h>
-#include <memory>
-#include <vtkAlgorithmOutput.h>
-#include <vtkPLYReader.h>
-#include <vtkSmartPointer.h>
+#include "ReconstructionOptions.hpp"
+#include <QObject>
+#include <QProcess>
 
-class PhotogrammetryPipeline {
+class PhotogrammetryPipeline : public QObject {
+  Q_OBJECT
 public:
-  PhotogrammetryPipeline() = default;
-  PhotogrammetryPipeline(const PhotogrammetryPipeline &) = delete;
-  PhotogrammetryPipeline(PhotogrammetryPipeline &&) noexcept = delete;
-  PhotogrammetryPipeline &operator=(const PhotogrammetryPipeline &) = delete;
-  PhotogrammetryPipeline &
-  operator=(PhotogrammetryPipeline &&) noexcept = delete;
-  ~PhotogrammetryPipeline() = default;
+  explicit PhotogrammetryPipeline(QObject *parent = nullptr);
 
-  std::string createMesh(const QString &workspace);
+signals:
+  /* forwarded to MainWindow for display */
+  void logMessage(const QString &text);
+
+public slots:
+  /* connected to PipelineController::runReconstruction */
+  void runReconstruction(const ReconstructionOptions &opts);
 
 private:
-  colmap::AutomaticReconstructionController::Options options;
-  std::unique_ptr<colmap::AutomaticReconstructionController> controller;
-  std::unique_ptr<colmap::ReconstructionManager> manager;
+  void startProcess(const QStringList &args);
+  static QStringList toColmapArgs(const ReconstructionOptions &o);
 };
