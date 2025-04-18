@@ -23,35 +23,37 @@ public:
 
 signals:
   void runReconstruction();
+  void logMessage(const QString &message);
 
 public slots:
   void onRunButtonClicked();
+  void setWorkspacePath(const QString &workspacePath);
 
 private:
   ReconstructionOptions reconOpts;
 
-  QSpinBox *randomSeedBox;
-  QCheckBox *logToStderrCheck;
-  QSpinBox *logLevelBox;
-  QLineEdit *projectPathEdit;
-  QLineEdit *workspacePathEdit;
-  QLineEdit *imagePathEdit;
-  QLineEdit *maskPathEdit;
-  QLineEdit *vocabTreePathEdit;
-  QComboBox *dataTypeBox;
-  QComboBox *qualityBox;
-  QLineEdit *cameraModelEdit;
+  QSpinBox *randomSeedField;
+  QCheckBox *logToStdErrCheck;
+  QSpinBox *logLevelField;
+  QLineEdit *projectPathField;
+  QLineEdit *workspacePathField;
+  QLineEdit *imagePathField;
+  QLineEdit *maskPathField;
+  QLineEdit *vocabTreePathField;
+  QComboBox *dataTypeMenu;
+  QComboBox *qualityMenu;
+  QLineEdit *cameraModelField;
   QCheckBox *singleCameraCheck;
   QCheckBox *singleCameraPerFolderCheck;
-  QLineEdit *cameraParamsEdit;
+  QLineEdit *cameraParamsField;
   QCheckBox *extractionCheck;
   QCheckBox *matchingCheck;
   QCheckBox *sparseCheck;
   QCheckBox *denseCheck;
-  QComboBox *mesherBox;
-  QSpinBox *numThreadsBox;
+  QComboBox *mesherMenu;
+  QSpinBox *numThreadsField;
   QCheckBox *useGPUCheck;
-  QSpinBox *gpuIndexBox;
+  QSpinBox *gpuIndexField;
   QPushButton *runButton;
 
   void logChange(const QString &label, const QString &value);

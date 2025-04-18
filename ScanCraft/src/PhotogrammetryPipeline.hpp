@@ -1,24 +1,22 @@
 #pragma once
+#include "ReconstructionOptions.hpp"
 #include <QObject>
+#include <QProcess>
 
 class PhotogrammetryPipeline : public QObject {
   Q_OBJECT
 public:
   explicit PhotogrammetryPipeline(QObject *parent = nullptr);
-  PhotogrammetryPipeline(const PhotogrammetryPipeline &) = delete;
-  PhotogrammetryPipeline(PhotogrammetryPipeline &&) noexcept = delete;
-  PhotogrammetryPipeline &operator=(const PhotogrammetryPipeline &) = delete;
-  PhotogrammetryPipeline &
-  operator=(PhotogrammetryPipeline &&) noexcept = delete;
-  ~PhotogrammetryPipeline() = default;
-
-  [[nodiscard]] QString &getWorkspacePath();
 
 signals:
+  /* forwarded to MainWindow for display */
+  void logMessage(const QString &text);
+
 public slots:
-  void processImages();
-  void setWorkspacePath(const QString &workspacePath);
+  /* connected to PipelineController::runReconstruction */
+  void runReconstruction(const ReconstructionOptions &opts);
 
 private:
-  QString workspacePath;
+  void startProcess(const QStringList &args);
+  static QStringList toColmapArgs(const ReconstructionOptions &o);
 };

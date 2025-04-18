@@ -54,6 +54,12 @@ target_include_directories(${EXE_NAME} PRIVATE
   src
   
 )
+if(COLMAP_EXECUTABLE)
+  message(STATUS "Found COLMAP at: ${COLMAP_EXECUTABLE}")
+  add_compile_definitions(COLMAP_EXECUTABLE="${COLMAP_EXECUTABLE}")
+else()
+  message(FATAL_ERROR "COLMAP not found!")
+endif()
 
 if (WIN32)
     add_compile_definitions(_USE_MATH_DEFINES)

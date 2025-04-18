@@ -1,5 +1,4 @@
 #include "MeshLoader.hpp"
-#include "MainWindow.hpp"
 #include <QWidget>
 #include <vtkAlgorithmOutput.h>
 #include <vtkSTLReader.h>
@@ -16,9 +15,7 @@ vtkAlgorithmOutput *MeshLoader::loadSTL(const QString &file) {
   STLreader = vtkSmartPointer<vtkSTLReader>::New();
   STLreader->SetFileName(file.toStdString().c_str());
   STLreader->Update();
-  if (auto *mw = qobject_cast<MainWindow *>(this->parent())) {
-    emit mw->logMessage("STL file loaded successfully.");
-  }
+  emit logMessage("STL file loaded successfully.");
   return STLreader->GetOutputPort();
 }
 vtkAlgorithmOutput *MeshLoader::loadPLY(const QString &file) {
@@ -30,8 +27,7 @@ vtkAlgorithmOutput *MeshLoader::loadPLY(const QString &file) {
   PLYreader = vtkSmartPointer<vtkPLYReader>::New();
   PLYreader->SetFileName(file.toStdString().c_str());
   PLYreader->Update();
-  if (auto *mw = qobject_cast<MainWindow *>(this->parent())) {
-    emit mw->logMessage("PLY file loaded successfully.");
-  }
+  logMessage("PLY file loaded successfully.");
+
   return PLYreader->GetOutputPort();
 }

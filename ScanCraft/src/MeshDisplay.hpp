@@ -13,6 +13,7 @@ public:
   explicit MeshDisplay(QWidget *parent = nullptr);
 
 signals:
+  void logMessage(const QString &message);
 
 public slots:
   // void displayMesh(vtkAlgorithmOutput *mesh);

@@ -5,7 +5,7 @@
 #include <vtkPLYReader.h>
 #include <vtkSTLReader.h>
 #include <vtkSmartPointer.h>
-class MeshLoader : QObject {
+class MeshLoader : public QObject {
   Q_OBJECT
 public:
   explicit MeshLoader(QObject *parent = nullptr);
@@ -16,7 +16,9 @@ public:
   ~MeshLoader() = default;
   vtkAlgorithmOutput *loadSTL(const QString &file);
   vtkAlgorithmOutput *loadPLY(const QString &file);
-
+signals:
+  void logMessage(const QString &message);
+public slots:
 private:
   vtkSmartPointer<vtkSTLReader> STLreader;
   vtkSmartPointer<vtkPLYReader> PLYreader;

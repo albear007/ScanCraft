@@ -1,5 +1,7 @@
 #include "MainWindow.hpp"
 #include "MeshDisplay.hpp"
+#include "MeshLoader.hpp"
+#include "PhotogrammetryPipeline.hpp"
 #include "PipelineController.hpp"
 #include <QFileDialog>
 #include <QScrollBar>
@@ -32,11 +34,16 @@ void MainWindow::setupLog() {
   dockLog->setWidget(logBox = new QPlainTextEdit(this));
   logBox->setReadOnly(true);
   logBox->setPlainText("Log: std::ccout for colmap, other logs will be here.");
-  connect(this, &MainWindow::logMessage, this, &MainWindow::appendLog);
-  this->logMessage("Welcome to ScanCraft!");
-  this->logMessage("ScanCraft is a photogrammetry software.");
-  this->logMessage("Please select a mesh file to get started.");
-  this->logMessage(dockPipelineController->getOptions().toString());
+  connect(meshDisplay, &MeshDisplay::logMessage, this, &MainWindow::appendLog);
+  connect(meshLoader, &MeshLoader::logMessage, this, &MainWindow::appendLog);
+  connect(pipeline, &PhotogrammetryPipeline::logMessage, this,
+          &MainWindow::appendLog);
+  connect(dockPipelineController, &PipelineController::logMessage, this,
+          &MainWindow::appendLog);
+  appendLog("Welcome to ScanCraft!");
+  appendLog("ScanCraft is a photogrammetry software.");
+  appendLog("Please select a mesh file to get started.");
+  appendLog(dockPipelineController->getOptions().toString());
 }
 
 void MainWindow::setupMenus() {
@@ -70,8 +77,9 @@ void MainWindow::setupOpenAction() {
 }
 
 void MainWindow::setupProcessAction() {
-  connect(processAction, &QAction::triggered, pipeline,
-          &PhotogrammetryPipeline::processImages);
+  connect(processAction, &QAction::triggered, this, [this]() {
+    pipeline->runReconstruction(dockPipelineController->getOptions());
+  });
 }
 
 void MainWindow::setupSetWorkspaceAction() {
@@ -83,8 +91,7 @@ void MainWindow::setupSetWorkspaceAction() {
 
     // If a valid path was selected, call setWorkspace on the pipeline.
     if (!workspacePath.isEmpty()) {
-      pipeline->setWorkspacePath(workspacePath);
-      logBox->appendPlainText("Workspace set to: " + workspacePath);
+      dockPipelineController->setWorkspacePath(workspacePath);
     }
   });
 }

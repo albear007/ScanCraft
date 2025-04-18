@@ -11,7 +11,7 @@ struct ReconstructionOptions {
   QString maskPath;
   QString vocabTreePath;
   enum class dataType { Individual, Video, Internet };
-  dataType colorMode = dataType::Individual;
+  dataType type = dataType::Individual;
   enum class Quality { Low, Medium, High, Extreme };
   Quality quality = Quality::High;
   QString cameraModel;
@@ -58,7 +58,7 @@ struct ReconstructionOptions {
         .arg(imagePath)
         .arg(maskPath)
         .arg(vocabTreePath)
-        .arg(static_cast<int>(colorMode))
+        .arg(static_cast<int>(type))
         .arg(static_cast<int>(quality))
         .arg(cameraModel)
         .arg(singleCamera)

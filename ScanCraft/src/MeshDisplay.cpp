@@ -1,5 +1,4 @@
 #include "MeshDisplay.hpp"
-#include "MainWindow.hpp"
 #include <QVTKOpenGLNativeWidget.h>
 #include <qassert.h>
 #include <qnamespace.h>
@@ -28,7 +27,6 @@ void MeshDisplay::displayMesh(vtkAlgorithmOutput *mesh) {
   mapper->SetInputConnection(mesh);
   renderer->ResetCamera();
   renderWindow->Render();
-  if (auto *mw = qobject_cast<MainWindow *>(this->window())) {
-    emit mw->logMessage("Mesh displayed successfully.");
-  }
+
+  logMessage("Mesh displayed successfully.");
 }
