@@ -47,7 +47,6 @@ void PhotogrammetryPipeline::startProcess(const QStringList &args) {
           });
 
   emit logMessage("▶  Starting COLMAP …");
-  emit logMessage("▶  Executing: " + exe + " " + args.join(' '));
   p->start();
 }
 
